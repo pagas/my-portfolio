@@ -4,10 +4,13 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { scrollToSection as scrollTo } from "@/lib/scroll";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,10 +25,19 @@ export default function Navigation() {
     setIsOpen(false);
   };
 
+  const handleNavClick = (item: typeof navItems[0]) => {
+    if (item.href) {
+      setIsOpen(false);
+    } else if (item.id) {
+      scrollToSection(item.id);
+    }
+  };
+
   const navItems = [
     { name: "Home", id: "home" },
     { name: "About", id: "about" },
     { name: "Projects", id: "projects" },
+    { name: "Blog", href: "/blog" },
     { name: "Contact", id: "contact" },
   ];
 
@@ -54,15 +66,27 @@ export default function Navigation() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8">
             {navItems.map((item) => (
-              <motion.button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className="text-foreground/80 hover:text-foreground transition-colors font-medium"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {item.name}
-              </motion.button>
+              item.href ? (
+                <Link key={item.name} href={item.href}>
+                  <motion.span
+                    className="text-foreground/80 hover:text-foreground transition-colors font-medium cursor-pointer"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {item.name}
+                  </motion.span>
+                </Link>
+              ) : (
+                <motion.button
+                  key={item.id}
+                  onClick={() => item.id && scrollToSection(item.id)}
+                  className="text-foreground/80 hover:text-foreground transition-colors font-medium"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {item.name}
+                </motion.button>
+              )
             ))}
           </div>
 
@@ -87,14 +111,26 @@ export default function Navigation() {
           >
             <div className="px-4 py-4 space-y-3">
               {navItems.map((item) => (
-                <motion.button
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className="block w-full text-left px-4 py-2 rounded-lg hover:bg-accent transition-colors font-medium"
-                  whileHover={{ x: 10 }}
-                >
-                  {item.name}
-                </motion.button>
+                item.href ? (
+                  <Link key={item.name} href={item.href}>
+                    <motion.div
+                      onClick={() => setIsOpen(false)}
+                      className="block w-full text-left px-4 py-2 rounded-lg hover:bg-accent transition-colors font-medium"
+                      whileHover={{ x: 10 }}
+                    >
+                      {item.name}
+                    </motion.div>
+                  </Link>
+                ) : (
+                  <motion.button
+                    key={item.id}
+                    onClick={() => handleNavClick(item)}
+                    className="block w-full text-left px-4 py-2 rounded-lg hover:bg-accent transition-colors font-medium"
+                    whileHover={{ x: 10 }}
+                  >
+                    {item.name}
+                  </motion.button>
+                )
               ))}
             </div>
           </motion.div>
