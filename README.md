@@ -1,36 +1,152 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Modern Portfolio Website
 
-## Getting Started
+A beautiful, responsive portfolio website built with the latest web technologies.
 
-First, run the development server:
+## 🚀 Tech Stack
+
+- **Framework**: Next.js 15.5.6 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4
+- **UI Components**: shadcn/ui (New York style)
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **Fonts**: Geist Sans & Geist Mono
+
+## 📦 Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- pnpm (or npm/yarn)
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Install dependencies
+pnpm install
+
+# Run development server
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view your portfolio.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🎨 Customization
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Update Your Information
 
-## Learn More
+1. **Personal Details** - Edit these files:
+   - `src/components/hero.tsx` - Name, title, description, and social links
+   - `src/components/about.tsx` - About section, skills, and technologies
+   - `src/components/contact.tsx` - Email and location
+   - `src/components/footer.tsx` - Footer text
+   - `src/app/layout.tsx` - Meta tags and SEO
 
-To learn more about Next.js, take a look at the following resources:
+### Add Your Projects
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Edit `src/components/projects.tsx`:
+- Update the `projects` array with your actual projects
+- Replace placeholder images with real project images (add to `/public` folder)
+- Update GitHub and live demo links
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Customize Colors
 
-## Deploy on Vercel
+The portfolio uses a blue-to-purple gradient theme. To change colors:
+- Edit gradient classes in components (search for `from-blue-600 to-purple-600`)
+- Modify CSS variables in `src/app/globals.css`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Add More Sections
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Create new components in `src/components/` and import them into `src/app/page.tsx`.
+
+## 📱 Sections
+
+- **Navigation** - Sticky navbar with smooth scroll
+- **Hero** - Eye-catching introduction with animations
+- **About** - Personal information, skills, and technologies
+- **Projects** - Showcase of your work with links
+- **Contact** - Contact form and information
+- **Footer** - Social links and copyright
+
+## 🎭 Features
+
+- ✅ Fully responsive design
+- ✅ Dark mode support (automatic based on system preference)
+- ✅ Smooth scroll animations
+- ✅ Mobile-friendly navigation
+- ✅ SEO optimized
+- ✅ Performance optimized with Next.js
+- ✅ Type-safe with TypeScript
+- ✅ Modern UI with Tailwind CSS 4
+
+## 📦 Build for Production
+
+```bash
+# Create production build
+pnpm build
+
+# Start production server
+pnpm start
+```
+
+## 🚀 Deployment
+
+### Deploy to Vercel (Recommended)
+
+1. Push your code to GitHub
+2. Import your repository on [Vercel](https://vercel.com)
+3. Vercel will automatically detect Next.js and deploy
+
+### Other Options
+
+- **Netlify**: Connect your Git repository
+- **Cloudflare Pages**: Connect your Git repository
+- **Self-hosted**: Build and serve the `.next` folder
+
+## 📄 Project Structure
+
+```
+my-portfolio/
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx       # Root layout with metadata
+│   │   ├── page.tsx         # Main page
+│   │   └── globals.css      # Global styles
+│   ├── components/
+│   │   ├── navigation.tsx   # Navigation component
+│   │   ├── hero.tsx         # Hero section
+│   │   ├── about.tsx        # About section
+│   │   ├── projects.tsx     # Projects section
+│   │   ├── contact.tsx      # Contact section
+│   │   └── footer.tsx       # Footer component
+│   └── lib/
+│       └── utils.ts         # Utility functions
+├── public/                  # Static assets
+└── package.json
+```
+
+## 🎨 Adding shadcn/ui Components
+
+```bash
+# Add a button component
+pnpm dlx shadcn@latest add button
+
+# Add a card component
+pnpm dlx shadcn@latest add card
+```
+
+## 📝 License
+
+This project is open source and available under the MIT License.
+
+## 🤝 Contributing
+
+Feel free to fork this project and customize it for your own portfolio!
+
+## 📧 Support
+
+If you have questions or need help, please open an issue on GitHub.
+
+---
+
+Built with ❤️ using Next.js, TypeScript, Tailwind CSS, and Framer Motion
