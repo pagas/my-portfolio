@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
 import { scrollToSection } from "@/lib/scroll";
 
-export default function Hero() {
+export function Hero() {
 
   return (
     <section

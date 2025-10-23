@@ -6,7 +6,7 @@ import { useRef } from "react";
 import { ExternalLink, Github } from "lucide-react";
 import Image from "next/image";
 
-export default function Projects() {
+export function Projects() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
