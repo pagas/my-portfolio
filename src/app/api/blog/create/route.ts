@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { createPost } from '@/lib/actions/blog-actions';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,30 +21,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const postsDirectory = path.join(process.cwd(), 'content/blog');
-    
-    // Create directory if it doesn't exist
-    if (!fs.existsSync(postsDirectory)) {
-      fs.mkdirSync(postsDirectory, { recursive: true });
-    }
+    const result = await createPost(slug, content);
 
-    const filePath = path.join(postsDirectory, `${slug}.mdx`);
-
-    // Check if file already exists
-    if (fs.existsSync(filePath)) {
+    if (result.success) {
       return NextResponse.json(
-        { message: 'A post with this slug already exists' },
-        { status: 409 }
+        { message: result.message, slug: result.slug },
+        { status: 201 }
+      );
+    } else {
+      return NextResponse.json(
+        { message: result.message },
+        { status: result.message.includes('already exists') ? 409 : 500 }
       );
     }
-
-    // Write the file
-    fs.writeFileSync(filePath, content, 'utf8');
-
-    return NextResponse.json(
-      { message: 'Blog post created successfully', slug },
-      { status: 201 }
-    );
 
   } catch (error) {
     console.error('Error creating blog post:', error);

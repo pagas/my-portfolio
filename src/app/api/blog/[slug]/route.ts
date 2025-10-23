@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPostBySlug } from '@/lib/blog';
-import fs from 'fs';
-import path from 'path';
+import { updatePost } from '@/lib/actions/blog-actions';
 
 export async function GET(
   request: NextRequest,
@@ -41,24 +40,19 @@ export async function PUT(
       );
     }
 
-    const postsDirectory = path.join(process.cwd(), 'content/blog');
-    const filePath = path.join(postsDirectory, `${params.slug}.mdx`);
+    const result = await updatePost(params.slug, content);
 
-    // Check if file exists
-    if (!fs.existsSync(filePath)) {
+    if (result.success) {
       return NextResponse.json(
-        { message: 'Post not found' },
-        { status: 404 }
+        { message: result.message },
+        { status: 200 }
+      );
+    } else {
+      return NextResponse.json(
+        { message: result.message },
+        { status: result.message.includes('not found') ? 404 : 500 }
       );
     }
-
-    // Write the updated content
-    fs.writeFileSync(filePath, content, 'utf8');
-
-    return NextResponse.json(
-      { message: 'Blog post updated successfully' },
-      { status: 200 }
-    );
 
   } catch (error) {
     console.error('Error updating blog post:', error);

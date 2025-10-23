@@ -1,7 +1,9 @@
 import { getAllPosts } from "@/lib/blog";
 import Link from "next/link";
-import { Calendar, Clock, Edit, Trash2, Eye } from "lucide-react";
+import { Calendar, Clock, Edit, Eye } from "lucide-react";
 import { Metadata } from "next";
+import { DeleteButton } from "@/components/delete-button";
+import { deletePost } from "@/lib/actions/blog-actions";
 
 export const metadata: Metadata = {
   title: "Manage Blog Posts - Your Name",
@@ -92,18 +94,11 @@ export default function ManageBlogPosts() {
                       >
                         <Edit size={16} />
                       </Link>
-                      <button
-                        onClick={() => {
-                          if (confirm(`Are you sure you want to delete "${post.title}"?`)) {
-                            // TODO: Implement delete functionality
-                            alert('Delete functionality will be implemented');
-                          }
-                        }}
-                        className="p-2 rounded-lg hover:bg-red-500/20 transition-colors text-red-500"
-                        title="Delete Post"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      <DeleteButton
+                        slug={post.slug}
+                        title={post.title}
+                        onDelete={deletePost}
+                      />
                     </div>
                   </div>
                 </div>
