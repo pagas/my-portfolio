@@ -26,19 +26,21 @@ export default function Navigation() {
   };
 
   const handleNavClick = (item: typeof navItems[0]) => {
-    if (item.href) {
-      setIsOpen(false);
-    } else if (item.id) {
+    if (pathname === '/' && item.id) {
+      // On main page, scroll to section
       scrollToSection(item.id);
+    } else {
+      // On other pages, Link component will handle navigation
+      setIsOpen(false);
     }
   };
 
   const navItems = [
-    { name: "Home", id: "home" },
-    { name: "About", id: "about" },
-    { name: "Projects", id: "projects" },
+    { name: "Home", id: "home", href: "/#home" },
+    { name: "About", id: "about", href: "/#about" },
+    { name: "Projects", id: "projects", href: "/#projects" },
     { name: "Blog", href: "/blog" },
-    { name: "Contact", id: "contact" },
+    { name: "Contact", id: "contact", href: "/#contact" },
   ];
 
   return (
@@ -54,39 +56,29 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <motion.button
-            onClick={() => scrollToSection("home")}
-            className="text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Portfolio
-          </motion.button>
+          <Link href="/#home">
+            <motion.span
+              className="text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Portfolio
+            </motion.span>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8">
             {navItems.map((item) => (
-              item.href ? (
-                <Link key={item.name} href={item.href}>
-                  <motion.span
-                    className="text-foreground/80 hover:text-foreground transition-colors font-medium cursor-pointer"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {item.name}
-                  </motion.span>
-                </Link>
-              ) : (
-                <motion.button
-                  key={item.id}
-                  onClick={() => item.id && scrollToSection(item.id)}
-                  className="text-foreground/80 hover:text-foreground transition-colors font-medium"
+              <Link key={item.name} href={item.href || `/#${item.id}`}>
+                <motion.span
+                  className="text-foreground/80 hover:text-foreground transition-colors font-medium cursor-pointer"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => handleNavClick(item)}
                 >
                   {item.name}
-                </motion.button>
-              )
+                </motion.span>
+              </Link>
             ))}
           </div>
 
@@ -111,26 +103,15 @@ export default function Navigation() {
           >
             <div className="px-4 py-4 space-y-3">
               {navItems.map((item) => (
-                item.href ? (
-                  <Link key={item.name} href={item.href}>
-                    <motion.div
-                      onClick={() => setIsOpen(false)}
-                      className="block w-full text-left px-4 py-2 rounded-lg hover:bg-accent transition-colors font-medium"
-                      whileHover={{ x: 10 }}
-                    >
-                      {item.name}
-                    </motion.div>
-                  </Link>
-                ) : (
-                  <motion.button
-                    key={item.id}
+                <Link key={item.name} href={item.href || `/#${item.id}`}>
+                  <motion.div
                     onClick={() => handleNavClick(item)}
                     className="block w-full text-left px-4 py-2 rounded-lg hover:bg-accent transition-colors font-medium"
                     whileHover={{ x: 10 }}
                   >
                     {item.name}
-                  </motion.button>
-                )
+                  </motion.div>
+                </Link>
               ))}
             </div>
           </motion.div>
