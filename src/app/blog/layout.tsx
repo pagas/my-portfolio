@@ -1,5 +1,4 @@
-import Navigation from "@/components/navigation";
-import Footer from "@/components/footer";
+import { Navigation, Footer } from "@/components/layout";
 
 export default function BlogLayout({
   children,

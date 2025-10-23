@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Calendar, Tag, User, Image, Save, Eye } from "lucide-react";
 import { motion } from "framer-motion";
-import { MarkdownPreview } from "@/components/markdown-preview";
+import { MarkdownPreview } from "@/components/blog";
 
 interface BlogPostData {
   title: string;

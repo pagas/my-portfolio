@@ -1,10 +1,5 @@
-import Navigation from "@/components/navigation";
-import Hero from "@/components/hero";
-import About from "@/components/about";
-import Projects from "@/components/projects";
-import BlogSection from "@/components/blog-section";
-import Contact from "@/components/contact";
-import Footer from "@/components/footer";
+import { Navigation, Hero, About, Projects, Contact, Footer } from "@/components/layout";
+import { BlogSection } from "@/components/blog";
 import { getAllPosts } from "@/lib/blog";
 
 export default function Home() {

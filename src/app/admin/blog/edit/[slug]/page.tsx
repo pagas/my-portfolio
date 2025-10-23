@@ -11,11 +11,8 @@ import { useBlogForm } from "@/hooks/useBlogForm";
 import { useBlogSubmit } from "@/hooks/useBlogSubmit";
 
 // Components
-import { LoadingSpinner } from "@/components/loading-spinner";
-import { ErrorMessage } from "@/components/error-message";
-import { FormField } from "@/components/form-field";
-import { TagManager } from "@/components/tag-manager";
-import { ContentEditor } from "@/components/content-editor";
+import { LoadingSpinner, ErrorMessage, FormField } from "@/components/ui";
+import { TagManager, ContentEditor } from "@/components/blog";
 
 // Utils
 import { validateBlogPost, getFieldError } from "@/utils/validation";

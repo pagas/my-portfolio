@@ -3,7 +3,7 @@ import { Calendar, Clock, ArrowLeft, Tag } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { MarkdownPreview } from "@/components/markdown-preview";
+import { MarkdownPreview } from "@/components/blog";
 import { use } from "react";
 
 interface BlogPostPageProps {

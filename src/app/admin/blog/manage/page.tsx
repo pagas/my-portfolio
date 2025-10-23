@@ -2,7 +2,7 @@ import { getAllPosts } from "@/lib/blog";
 import Link from "next/link";
 import { Calendar, Clock, Edit, Eye } from "lucide-react";
 import { Metadata } from "next";
-import { DeleteButton } from "@/components/delete-button";
+import { DeleteButton } from "@/components/admin";
 import { deletePost } from "@/lib/actions/blog-actions";
 
 export const metadata: Metadata = {
