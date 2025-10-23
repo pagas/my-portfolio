@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Edit, Eye } from "lucide-react";
-import { DeleteButton } from "./delete-button";
+import { DeleteButton } from "@/components/admin/actions";
 import { deletePost } from "@/lib/actions/blog-actions";
 
 interface PostActionsProps {
