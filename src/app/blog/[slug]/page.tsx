@@ -2,8 +2,8 @@ import { getAllPosts, getPostBySlug, getRelatedPosts } from "@/lib/blog";
 import { Calendar, Clock, ArrowLeft, Tag } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MDXRemote } from "next-mdx-remote/rsc";
 import { Metadata } from "next";
+import { MarkdownPreview } from "@/components/markdown-preview";
 
 interface BlogPostPageProps {
   params: { slug: string };
@@ -97,11 +97,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
         </header>
 
         {/* Post Content */}
-        <div className="prose prose-lg max-w-none">
-          <div className="mdx-content">
-            <MDXRemote source={post.content} />
-          </div>
-        </div>
+        <MarkdownPreview content={post.content} />
 
         {/* Divider */}
         <hr className="my-12 border-border" />
