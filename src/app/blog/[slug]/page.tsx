@@ -4,9 +4,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { MarkdownPreview } from "@/components/markdown-preview";
+import { use } from "react";
 
 interface BlogPostPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
@@ -17,7 +18,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-  const post = getPostBySlug(params.slug);
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
   
   if (!post) {
     return {
@@ -33,13 +35,14 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 }
 
 export default function BlogPostPage({ params }: BlogPostPageProps) {
-  const post = getPostBySlug(params.slug);
+  const { slug } = use(params);
+  const post = getPostBySlug(slug);
 
   if (!post || !post.content) {
     notFound();
   }
 
-  const relatedPosts = getRelatedPosts(post.slug, post.tags);
+  const relatedPosts = getRelatedPosts(slug, post.tags);
 
   return (
     <main className="min-h-screen pt-20">

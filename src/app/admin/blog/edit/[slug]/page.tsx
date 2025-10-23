@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { Calendar, Tag, User, Image, Save, Eye } from "lucide-react";
 import { motion } from "framer-motion";
@@ -17,13 +17,14 @@ interface BlogPostData {
 }
 
 interface EditBlogPostProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default function EditBlogPost({ params }: EditBlogPostProps) {
   const router = useRouter();
+  const { slug } = use(params);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [previewMode, setPreviewMode] = useState(false);
@@ -42,7 +43,7 @@ export default function EditBlogPost({ params }: EditBlogPostProps) {
     // Load existing post data
     const loadPost = async () => {
       try {
-        const response = await fetch(`/api/blog/${params.slug}`);
+        const response = await fetch(`/api/blog/${slug}`);
         if (response.ok) {
           const post = await response.json();
           setFormData({
@@ -66,7 +67,7 @@ export default function EditBlogPost({ params }: EditBlogPostProps) {
     };
 
     loadPost();
-  }, [params.slug, router]);
+  }, [slug, router]);
 
   const handleInputChange = (field: keyof BlogPostData, value: string) => {
     setFormData(prev => ({
@@ -115,7 +116,7 @@ coverImage: "${formData.coverImage}"
 
 ${formData.content}`;
 
-      const response = await fetch(`/api/blog/${params.slug}`, {
+      const response = await fetch(`/api/blog/${slug}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +127,7 @@ ${formData.content}`;
       });
 
       if (response.ok) {
-        router.push(`/blog/${params.slug}`);
+        router.push(`/blog/${slug}`);
       } else {
         const error = await response.json();
         alert(`Error updating post: ${error.message}`);

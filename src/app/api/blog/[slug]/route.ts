@@ -4,10 +4,11 @@ import { updatePost } from '@/lib/actions/blog-actions';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const post = getPostBySlug(params.slug);
+    const { slug } = await params;
+    const post = getPostBySlug(slug);
     
     if (!post) {
       return NextResponse.json(
@@ -28,9 +29,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params;
     const { content } = await request.json();
 
     if (!content) {
@@ -40,7 +42,7 @@ export async function PUT(
       );
     }
 
-    const result = await updatePost(params.slug, content);
+    const result = await updatePost(slug, content);
 
     if (result.success) {
       return NextResponse.json(
