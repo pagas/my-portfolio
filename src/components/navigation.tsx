@@ -41,6 +41,10 @@ export default function Navigation() {
     { name: "Projects", id: "projects", href: "/#projects" },
     { name: "Blog", href: "/blog" },
     { name: "Contact", id: "contact", href: "/#contact" },
+    // Show admin link in development or when on admin pages
+    ...(process.env.NODE_ENV === 'development' || pathname.startsWith('/admin') 
+      ? [{ name: "Admin", href: "/admin" }] 
+      : []),
   ];
 
   return (
