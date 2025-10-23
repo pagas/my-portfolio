@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Calendar, Tag, User, Image, Save, Eye } from "lucide-react";
 import { motion } from "framer-motion";
+import { MarkdownPreview } from "@/components/markdown-preview";
 
 interface BlogPostData {
   title: string;
@@ -293,21 +294,40 @@ ${formData.content}`;
               </div>
 
               {previewMode ? (
-                <div className="prose prose-lg max-w-none">
-                  <div className="bg-background p-6 rounded-lg border border-border">
-                    <h1 className="text-3xl font-bold mb-4">{formData.title}</h1>
-                    <p className="text-foreground/60 mb-4">{formData.description}</p>
-                    <div className="border-t border-border pt-4">
-                      <div dangerouslySetInnerHTML={{ __html: formData.content.replace(/\n/g, '<br>') }} />
-                    </div>
-                  </div>
-                </div>
+                <MarkdownPreview 
+                  content={formData.content}
+                  title={formData.title}
+                  description={formData.description}
+                />
               ) : (
                 <textarea
                   value={formData.content}
                   onChange={(e) => handleInputChange('content', e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
-                  placeholder="Write your blog post content in Markdown..."
+                  placeholder={`Write your blog post content in Markdown...
+
+Examples:
+# Heading 1
+## Heading 2
+### Heading 3
+
+**Bold text**
+*Italic text*
+
+- List item 1
+- List item 2
+
+1. Numbered item 1
+2. Numbered item 2
+
+\`\`\`javascript
+// Code block
+const example = "Hello World";
+\`\`\`
+
+[Link text](https://example.com)
+
+> Blockquote`}
                   rows={20}
                   required
                 />
