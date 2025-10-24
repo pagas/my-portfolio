@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { config } from 'dotenv';
+import readingTime from 'reading-time';
 import { initializeApp } from 'firebase/app';
 import { 
   getFirestore,
@@ -68,6 +69,7 @@ async function createPostForMigration(postData: {
     const docRef = await addDoc(postsRef, {
       ...postData,
       slug,
+      readingTime: readingTime(postData.content).text,
       publishedAt: serverTimestamp(),
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),

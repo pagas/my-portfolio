@@ -12,6 +12,7 @@ import {
   serverTimestamp,
   Timestamp 
 } from 'firebase/firestore';
+import readingTime from 'reading-time';
 import { db } from './firebase';
 import { BlogPost, BlogPostData } from '@/types/blog';
 
@@ -34,11 +35,10 @@ function docToBlogPost(doc: any): BlogPost {
   };
 }
 
-// Calculate reading time (200 words per minute)
+// Calculate reading time using the reading-time library
 function calculateReadingTime(content: string): string {
-  const words = content.trim().split(/\s+/).length;
-  const readingTime = Math.ceil(words / 200);
-  return `${readingTime} min read`;
+  const stats = readingTime(content);
+  return stats.text;
 }
 
 // Get all blog posts
