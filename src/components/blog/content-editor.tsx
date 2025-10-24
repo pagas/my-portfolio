@@ -37,8 +37,6 @@ export function ContentEditor({
       {previewMode ? (
         <MarkdownPreview 
           content={content}
-          title={title}
-          description={description}
         />
       ) : (
         <div>

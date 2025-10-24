@@ -7,27 +7,18 @@ import 'highlight.js/styles/github-dark.css'; // Dark theme for syntax highlight
 
 interface MarkdownPreviewProps {
   content: string;
-  title?: string;
-  description?: string;
 }
 
-export function MarkdownPreview({ content, title, description }: MarkdownPreviewProps) {
+export function MarkdownPreview({ content }: MarkdownPreviewProps) {
   return (
     <div className="prose prose-lg max-w-none">
       <div className="bg-background p-6 rounded-lg border border-border">
-        {title && (
-          <h1 className="text-3xl font-bold mb-4">{title}</h1>
-        )}
-        {description && (
-          <p className="text-foreground/60 mb-4">{description}</p>
-        )}
-        <div className="border-t border-border pt-4">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeHighlight]}
-            components={{
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeHighlight]}
+          components={{
               h1: ({ children }) => (
-                <h1 className="text-4xl font-bold mt-8 mb-4 bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold mt-8 mb-4">
                   {children}
                 </h1>
               ),
@@ -98,7 +89,6 @@ export function MarkdownPreview({ content, title, description }: MarkdownPreview
           >
             {content}
           </ReactMarkdown>
-        </div>
       </div>
     </div>
   );
