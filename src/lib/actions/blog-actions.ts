@@ -68,8 +68,3 @@ export async function updatePostAction(slug: string, postData: {
     return { success: false, message: 'Internal server error' };
   }
 }
-
-// Keep the old function names for backward compatibility
-export const deletePost = deletePostAction;
-export const createPost = createPostAction;
-export const updatePost = updatePostAction;

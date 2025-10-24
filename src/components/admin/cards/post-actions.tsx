@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Edit, Eye } from "lucide-react";
 import { DeleteButton } from "@/components/admin/actions";
-import { deletePost } from "@/lib/actions/blog-actions";
+import { deletePostAction } from "@/lib/actions/blog-actions";
 
 interface PostActionsProps {
   slug: string;
@@ -28,7 +28,7 @@ export function PostActions({ slug, title }: PostActionsProps) {
       <DeleteButton
         slug={slug}
         title={title}
-        onDelete={deletePost}
+        onDelete={deletePostAction}
       />
     </div>
   );
