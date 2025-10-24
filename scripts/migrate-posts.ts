@@ -1,7 +1,33 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { createPost } from '../src/lib/firebase-blog';
+import { config } from 'dotenv';
+import { initializeApp } from 'firebase/app';
+import { 
+  getFirestore,
+  collection, 
+  addDoc, 
+  query, 
+  where, 
+  getDocs,
+  serverTimestamp 
+} from 'firebase/firestore';
+
+// Load environment variables
+config({ path: '.env.local' });
+
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const postsDirectory = path.join(process.cwd(), 'content/blog');
 
@@ -10,6 +36,48 @@ interface MigrationResult {
   title: string;
   success: boolean;
   message: string;
+}
+
+// Custom createPost function for migration
+async function createPostForMigration(postData: {
+  title: string;
+  description: string;
+  tags: string[];
+  author: string;
+  coverImage: string;
+  content: string;
+}): Promise<{ success: boolean; message: string; id?: string }> {
+  try {
+    // Generate slug from title
+    const slug = postData.title
+      .toLowerCase()
+      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
+
+    // Check if slug already exists
+    const postsRef = collection(db, 'posts');
+    const q = query(postsRef, where('slug', '==', slug));
+    const snapshot = await getDocs(q);
+    
+    if (!snapshot.empty) {
+      return { success: false, message: 'A post with this title already exists' };
+    }
+
+    const docRef = await addDoc(postsRef, {
+      ...postData,
+      slug,
+      publishedAt: serverTimestamp(),
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+
+    return { success: true, message: 'Post created successfully', id: slug };
+  } catch (error) {
+    console.error('Error creating post:', error);
+    return { success: false, message: 'Failed to create post' };
+  }
 }
 
 async function migratePosts() {
@@ -57,7 +125,7 @@ async function migratePosts() {
 
         console.log(`📝 Migrating: ${postData.title}...`);
         
-        const result = await createPost(postData);
+        const result = await createPostForMigration(postData);
         
         if (result.success) {
           console.log(`   ✅ Successfully migrated: ${postData.title}`);
