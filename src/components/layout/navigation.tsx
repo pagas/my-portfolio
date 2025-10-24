@@ -53,10 +53,11 @@ export function Navigation() {
     { name: "Projects", id: "projects", href: "/#projects" },
     { name: "Blog", href: "/blog" },
     { name: "Contact", id: "contact", href: "/#contact" },
-    // Show admin link in development or when on admin pages
-    ...(process.env.NODE_ENV === 'development' || pathname.startsWith('/admin') 
+    // Show admin link only when user is authenticated, login link when not
+    ...(user 
       ? [{ name: "Admin", href: "/admin" }] 
-      : []),
+      : [{ name: "Login", href: "/auth/login" }]
+    ),
   ];
 
   return (
