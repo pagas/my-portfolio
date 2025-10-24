@@ -87,7 +87,8 @@ async function migratePosts() {
     // Check if directory exists
     if (!fs.existsSync(postsDirectory)) {
       console.log('❌ No content/blog directory found');
-      console.log('   Make sure you have MDX files in the content/blog folder');
+      console.log('   Create the content/blog directory and add your MDX files there');
+      console.log('   Then run this migration script again');
       return;
     }
 
