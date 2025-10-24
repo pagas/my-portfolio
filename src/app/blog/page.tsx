@@ -8,8 +8,8 @@ export const metadata: Metadata = {
   description: "Thoughts, tutorials, and insights about web development",
 };
 
-export default function BlogPage() {
-  const posts = getAllPosts();
+export default async function BlogPage() {
+  const posts = await getAllPosts();
 
   return (
     <main className="min-h-screen pt-20">

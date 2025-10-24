@@ -9,6 +9,7 @@ export interface BlogPostData {
 }
 
 export interface BlogPost extends BlogPostData {
+  id: string;
   slug: string;
   readingTime: string;
   date: string;

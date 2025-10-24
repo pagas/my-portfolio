@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   description: "Manage your blog posts",
 };
 
-export default function ManageBlogPosts() {
-  const posts = getAllPosts();
+export default async function ManageBlogPosts() {
+  const posts = await getAllPosts();
 
   return (
     <main className="min-h-screen pt-20">

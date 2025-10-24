@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPostBySlug } from '@/lib/blog';
-import { updatePost } from '@/lib/actions/blog-actions';
+import { getPostBySlug, updatePost } from '@/lib/firebase-blog';
 
 export async function GET(
   request: NextRequest,
@@ -8,7 +7,7 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
-    const post = getPostBySlug(slug);
+    const post = await getPostBySlug(slug);
     
     if (!post) {
       return NextResponse.json(
@@ -19,7 +18,7 @@ export async function GET(
 
     return NextResponse.json(post);
   } catch (error) {
-    console.error('Error fetching blog post:', error);
+    console.error('Error fetching post:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }
@@ -33,7 +32,7 @@ export async function PUT(
 ) {
   try {
     const { slug } = await params;
-    const { content } = await request.json();
+    const { title, description, tags, author, coverImage, content } = await request.json();
 
     if (!content) {
       return NextResponse.json(
@@ -42,7 +41,14 @@ export async function PUT(
       );
     }
 
-    const result = await updatePost(slug, content);
+    const result = await updatePost(slug, {
+      title,
+      description,
+      tags,
+      author,
+      coverImage,
+      content,
+    });
 
     if (result.success) {
       return NextResponse.json(
@@ -55,9 +61,8 @@ export async function PUT(
         { status: result.message.includes('not found') ? 404 : 500 }
       );
     }
-
   } catch (error) {
-    console.error('Error updating blog post:', error);
+    console.error('Error updating post:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

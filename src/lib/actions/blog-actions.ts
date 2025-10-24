@@ -1,84 +1,75 @@
 'use server';
 
 import { revalidatePath } from "next/cache";
-import fs from "fs";
-import path from "path";
+import { createPost, updatePost, deletePost } from '@/lib/firebase-blog';
 
-export async function deletePost(slug: string) {
+export async function deletePostAction(slug: string) {
   try {
-    const postsDirectory = path.join(process.cwd(), 'content/blog');
-    const filePath = path.join(postsDirectory, `${slug}.mdx`);
-
-    // Check if file exists
-    if (!fs.existsSync(filePath)) {
-      throw new Error('Post not found');
-    }
-
-    // Delete the file
-    fs.unlinkSync(filePath);
-
-    // Revalidate the blog pages to update the cache
-    revalidatePath('/blog');
-    revalidatePath('/admin/blog/manage');
+    const result = await deletePost(slug);
     
-    return { success: true, message: 'Post deleted successfully' };
+    if (result.success) {
+      // Revalidate the blog pages to update the cache
+      revalidatePath('/blog');
+      revalidatePath('/admin/blog/manage');
+    }
+    
+    return result;
   } catch (error) {
     console.error('Error deleting post:', error);
     return { success: false, message: 'Failed to delete post' };
   }
 }
 
-export async function createPost(slug: string, content: string) {
+export async function createPostAction(postData: {
+  title: string;
+  description: string;
+  tags: string[];
+  author: string;
+  coverImage: string;
+  content: string;
+}) {
   try {
-    const postsDirectory = path.join(process.cwd(), 'content/blog');
+    const result = await createPost(postData);
     
-    // Create directory if it doesn't exist
-    if (!fs.existsSync(postsDirectory)) {
-      fs.mkdirSync(postsDirectory, { recursive: true });
+    if (result.success) {
+      // Revalidate the blog pages
+      revalidatePath('/blog');
+      revalidatePath('/admin/blog/manage');
     }
-
-    const filePath = path.join(postsDirectory, `${slug}.mdx`);
-
-    // Check if file already exists
-    if (fs.existsSync(filePath)) {
-      return { success: false, message: 'A post with this slug already exists' };
-    }
-
-    // Write the file
-    fs.writeFileSync(filePath, content, 'utf8');
-
-    // Revalidate the blog pages
-    revalidatePath('/blog');
-    revalidatePath('/admin/blog/manage');
-
-    return { success: true, message: 'Blog post created successfully', slug };
+    
+    return result;
   } catch (error) {
     console.error('Error creating blog post:', error);
     return { success: false, message: 'Internal server error' };
   }
 }
 
-export async function updatePost(slug: string, content: string) {
+export async function updatePostAction(slug: string, postData: {
+  title?: string;
+  description?: string;
+  tags?: string[];
+  author?: string;
+  coverImage?: string;
+  content?: string;
+}) {
   try {
-    const postsDirectory = path.join(process.cwd(), 'content/blog');
-    const filePath = path.join(postsDirectory, `${slug}.mdx`);
-
-    // Check if file exists
-    if (!fs.existsSync(filePath)) {
-      return { success: false, message: 'Post not found' };
+    const result = await updatePost(slug, postData);
+    
+    if (result.success) {
+      // Revalidate the blog pages
+      revalidatePath('/blog');
+      revalidatePath('/admin/blog/manage');
+      revalidatePath(`/blog/${slug}`);
     }
-
-    // Write the updated content
-    fs.writeFileSync(filePath, content, 'utf8');
-
-    // Revalidate the blog pages
-    revalidatePath('/blog');
-    revalidatePath('/admin/blog/manage');
-    revalidatePath(`/blog/${slug}`);
-
-    return { success: true, message: 'Blog post updated successfully' };
+    
+    return result;
   } catch (error) {
     console.error('Error updating blog post:', error);
     return { success: false, message: 'Internal server error' };
   }
 }
+
+// Keep the old function names for backward compatibility
+export const deletePost = deletePostAction;
+export const createPost = createPostAction;
+export const updatePost = updatePostAction;
