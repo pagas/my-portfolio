@@ -126,7 +126,7 @@ export async function createPost(postData: BlogPostData): Promise<{ success: boo
       updatedAt: serverTimestamp(),
     });
 
-    return { success: true, message: 'Post created successfully', id: docRef.id };
+    return { success: true, message: 'Post created successfully', id: slug };
   } catch (error) {
     console.error('Error creating post:', error);
     return { success: false, message: 'Failed to create post' };
