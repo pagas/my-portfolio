@@ -1,4 +1,7 @@
+"use client";
+
 import { Navigation, Footer } from "@/components/layout";
+import { ProtectedRoute } from "@/components/auth";
 
 export default function AdminLayout({
   children,
@@ -6,10 +9,10 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <ProtectedRoute>
       <Navigation />
       {children}
       <Footer />
-    </>
+    </ProtectedRoute>
   );
 }

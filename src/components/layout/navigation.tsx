@@ -1,16 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { scrollToSection as scrollTo } from "@/lib/scroll";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +35,15 @@ export function Navigation() {
     } else {
       // On other pages, Link component will handle navigation
       setIsOpen(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.push('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
     }
   };
 
@@ -71,7 +83,7 @@ export function Navigation() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <Link key={item.name} href={item.href || `/#${item.id}`}>
                 <motion.span
@@ -84,6 +96,19 @@ export function Navigation() {
                 </motion.span>
               </Link>
             ))}
+            
+            {/* Logout Button - Only show when user is authenticated */}
+            {user && (
+              <motion.button
+                onClick={handleLogout}
+                className="flex items-center gap-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors font-medium"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <LogOut size={16} />
+                Logout
+              </motion.button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -117,6 +142,18 @@ export function Navigation() {
                   </motion.div>
                 </Link>
               ))}
+              
+              {/* Mobile Logout Button */}
+              {user && (
+                <motion.button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 w-full text-left px-4 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-medium text-red-600 dark:text-red-400"
+                  whileHover={{ x: 10 }}
+                >
+                  <LogOut size={16} />
+                  Logout
+                </motion.button>
+              )}
             </div>
           </motion.div>
         )}
