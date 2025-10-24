@@ -15,8 +15,14 @@ import {
 import readingTime from 'reading-time';
 import { db } from './firebase';
 import { BlogPost, BlogPostData } from '@/types/blog';
+import { getAuthorByUid, Author } from './authors';
 
 const POSTS_COLLECTION = 'posts';
+
+// Extended BlogPost with author data
+export interface BlogPostWithAuthor extends BlogPost {
+  author: Author;
+}
 
 // Convert Firestore document to BlogPost
 function docToBlogPost(doc: any): BlogPost {
@@ -28,7 +34,7 @@ function docToBlogPost(doc: any): BlogPost {
     description: data.description,
     content: data.content,
     tags: data.tags || [],
-    author: data.author,
+    authorId: data.authorId,
     coverImage: data.coverImage || '',
     date: data.publishedAt?.toDate?.()?.toISOString().split('T')[0] || data.date,
     readingTime: calculateReadingTime(data.content),
@@ -175,5 +181,51 @@ export async function deletePost(slug: string): Promise<{ success: boolean; mess
   } catch (error) {
     console.error('Error deleting post:', error);
     return { success: false, message: 'Failed to delete post' };
+  }
+}
+
+// Get all posts with author data
+export async function getAllPostsWithAuthors(): Promise<BlogPostWithAuthor[]> {
+  try {
+    const posts = await getAllPosts();
+    const postsWithAuthors: BlogPostWithAuthor[] = [];
+    
+    for (const post of posts) {
+      const author = await getAuthorByUid(post.authorId);
+      if (author) {
+        postsWithAuthors.push({
+          ...post,
+          author,
+        });
+      }
+    }
+    
+    return postsWithAuthors;
+  } catch (error) {
+    console.error('Error getting posts with authors:', error);
+    return [];
+  }
+}
+
+// Get a single post by slug with author data
+export async function getPostBySlugWithAuthor(slug: string): Promise<BlogPostWithAuthor | null> {
+  try {
+    const post = await getPostBySlug(slug);
+    if (!post) {
+      return null;
+    }
+    
+    const author = await getAuthorByUid(post.authorId);
+    if (!author) {
+      return null;
+    }
+    
+    return {
+      ...post,
+      author,
+    };
+  } catch (error) {
+    console.error('Error getting post with author:', error);
+    return null;
   }
 }

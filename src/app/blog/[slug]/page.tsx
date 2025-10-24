@@ -1,4 +1,4 @@
-import { getAllPosts, getPostBySlug, getRelatedPosts } from "@/lib/blog";
+import { getPostBySlugWithAuthor, getRelatedPosts, getAllPostsWithAuthors } from "@/lib/blog";
 import { Calendar, Clock, ArrowLeft, Tag } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -11,7 +11,7 @@ interface BlogPostPageProps {
 }
 
 export async function generateStaticParams() {
-  const posts = await getAllPosts();
+  const posts = await getAllPostsWithAuthors();
   return posts.map((post) => ({
     slug: post.slug,
   }));
@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = await getPostBySlugWithAuthor(slug);
   
   if (!post) {
     return {
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = await getPostBySlugWithAuthor(slug);
 
   if (!post || !post.content) {
     notFound();
@@ -80,7 +80,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <Clock size={16} />
               {post.readingTime}
             </span>
-            <span>By {post.author}</span>
+            <span>By <Link href={`/authors/${post.author.slug}`} className="text-blue-600 hover:underline">{post.author.displayName}</Link></span>
           </div>
 
           {/* Tags */}
@@ -109,8 +109,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className="bg-accent/30 rounded-xl p-6 mb-12">
           <h3 className="text-xl font-bold mb-2">About the Author</h3>
           <p className="text-foreground/70 mb-4">
-            {post.author} is a full-stack developer passionate about creating amazing web experiences.
-            Follow them on social media for more insights.
+            {post.author.bio || `${post.author.displayName} is a full-stack developer passionate about creating amazing web experiences.`}
           </p>
           <div className="flex gap-4">
             <Link href="https://github.com" className="text-blue-600 hover:underline">

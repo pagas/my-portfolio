@@ -55,14 +55,6 @@ export function BlogForm({
         />
 
         <FormField
-          label="Author"
-          id="author"
-          value={formData.author}
-          onChange={(value) => onInputChange('author', value)}
-          placeholder="Your name"
-        />
-
-        <FormField
           label="Cover Image URL"
           id="coverImage"
           type="url"

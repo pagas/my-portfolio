@@ -5,5 +5,9 @@ export {
   getRelatedPosts, 
   createPost, 
   updatePost, 
-  deletePost 
+  deletePost,
+  getAllPostsWithAuthors,
+  getPostBySlugWithAuthor
 } from './firebase-blog';
+
+export type { BlogPostWithAuthor } from './firebase-blog';

@@ -1,9 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createPost } from '@/lib/firebase-blog';
+import { verifyFirebaseToken } from '@/lib/auth-utils';
+import { getOrCreateAuthor } from '@/lib/authors';
 
 export async function POST(request: NextRequest) {
   try {
-    const { title, description, tags, author, coverImage, content } = await request.json();
+    // Verify authentication
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json(
+        { message: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.split('Bearer ')[1];
+    const user = await verifyFirebaseToken(token);
+    
+    if (!user) {
+      return NextResponse.json(
+        { message: 'Invalid authentication token' },
+        { status: 401 }
+      );
+    }
+
+    const { title, description, tags, coverImage, content } = await request.json();
 
     // Validate required fields
     if (!title || !description || !content) {
@@ -13,11 +34,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get or create author profile
+    const author = await getOrCreateAuthor(user.uid, user.email!, user.name);
+
     const result = await createPost({
       title,
       description,
       tags: tags || [],
-      author: author || 'Your Name',
+      authorId: author.uid,
       coverImage: coverImage || '',
       content,
     });

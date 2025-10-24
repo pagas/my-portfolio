@@ -1,20 +1,32 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { BlogPostData } from "@/types/blog";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function useNewPostForm() {
   const router = useRouter();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const [formData, setFormData] = useState<BlogPostData>({
     title: "",
     description: "",
     tags: [],
-    author: "Your Name",
+    author: user?.email || "Your Name",
     coverImage: "",
     content: "",
   });
   const [tagInput, setTagInput] = useState("");
+
+  // Update author when user changes
+  useEffect(() => {
+    if (user?.email) {
+      setFormData(prev => ({
+        ...prev,
+        author: user.email || "Your Name"
+      }));
+    }
+  }, [user]);
 
   const handleInputChange = useCallback((field: keyof BlogPostData, value: string) => {
     setFormData(prev => ({
@@ -56,12 +68,12 @@ export function useNewPostForm() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await user?.getIdToken()}`,
         },
         body: JSON.stringify({
           title: formData.title,
           description: formData.description,
           tags: formData.tags,
-          author: formData.author,
           coverImage: formData.coverImage,
           content: formData.content,
         }),

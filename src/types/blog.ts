@@ -2,7 +2,7 @@ export interface BlogPostData {
   title: string;
   description: string;
   tags: string[];
-  author: string;
+  authorId: string;
   coverImage: string;
   content: string;
   date?: string;
