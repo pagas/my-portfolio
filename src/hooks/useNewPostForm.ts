@@ -52,31 +52,18 @@ export function useNewPostForm() {
     setIsSubmitting(true);
 
     try {
-      // Generate slug from title
-      const slug = formData.title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
-
-      const mdxContent = `---
-title: "${formData.title}"
-date: "${new Date().toISOString().split('T')[0]}"
-description: "${formData.description}"
-tags: [${formData.tags.map(tag => `"${tag}"`).join(', ')}]
-author: "${formData.author}"
-coverImage: "${formData.coverImage}"
----
-
-${formData.content}`;
-
       const response = await fetch('/api/blog/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          slug,
-          content: mdxContent,
+          title: formData.title,
+          description: formData.description,
+          tags: formData.tags,
+          author: formData.author,
+          coverImage: formData.coverImage,
+          content: formData.content,
         }),
       });
 
