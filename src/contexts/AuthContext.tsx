@@ -39,6 +39,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (user) {
         // Create user profile if it doesn't exist
         await ensureUserProfile(user);
+        
+        // Set authentication cookie for server-side access
+        const token = await user.getIdToken();
+        const isSecure = process.env.NODE_ENV === 'production';
+        document.cookie = `auth-token=${token}; path=/; ${isSecure ? 'secure; ' : ''}samesite=strict`;
+      } else {
+        // Clear authentication cookie on logout
+        document.cookie = 'auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       }
       setUser(user);
       setLoading(false);
