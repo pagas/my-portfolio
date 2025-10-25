@@ -42,7 +42,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     notFound();
   }
 
-  const relatedPosts = await getRelatedPosts(slug, post.tags);
+  const relatedPosts = await getRelatedPosts(slug, post.tags ?? []);
 
   return (
     <main className="min-h-screen pt-20">
@@ -84,10 +84,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </div>
 
           {/* Tags */}
-          {post.tags.length > 0 && (
+          {(post.tags ?? []).length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
               <Tag size={16} className="text-foreground/60" />
-              {post.tags.map((tag) => (
+              {(post.tags ?? []).map((tag) => (
                 <span
                   key={tag}
                   className="px-3 py-1 bg-accent text-sm rounded-full"

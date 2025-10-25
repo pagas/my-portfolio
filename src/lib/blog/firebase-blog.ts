@@ -14,7 +14,7 @@ import {
 } from 'firebase/firestore';
 import readingTime from 'reading-time';
 import { db } from '../firebase/firebase';
-import { BlogPost, BlogPostData } from '@/types/blog';
+import { BlogPost, BlogPostData } from '@/schemas/blog';
 import { getUserByUid, User } from '../auth/users';
 
 const POSTS_COLLECTION = 'posts';
@@ -33,7 +33,7 @@ function docToBlogPost(doc: any): BlogPost {
     title: data.title,
     description: data.description,
     content: data.content,
-    tags: data.tags || [],
+    tags: data.tags ?? [],
     authorId: data.authorId,
     coverImage: data.coverImage || '',
     date: data.publishedAt?.toDate?.()?.toISOString().split('T')[0] || data.date,
@@ -96,7 +96,7 @@ export async function getRelatedPosts(currentSlug: string, tags: string[], limit
     
     // Filter posts that share tags with the current post
     const relatedPosts = allPosts.filter(post => 
-      post.tags.some(tag => tags.includes(tag))
+      (post.tags ?? []).some(tag => tags.includes(tag))
     );
     
     return relatedPosts.slice(0, limit);

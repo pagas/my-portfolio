@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { BlogPostData, BlogPost } from "@/types/blog";
+import { BlogPostData, BlogPost } from "@/schemas/blog";
 import { getPostAction } from "@/lib/actions/blog-actions";
 
 export function useBlogPost(slug: string) {

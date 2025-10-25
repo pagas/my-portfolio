@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { BlogPostData } from "@/types/blog";
+import { BlogPostData } from "@/schemas/blog";
 import { useAuth } from "@/contexts/AuthContext";
 import { createPostAction } from "@/lib/actions/blog-actions";
 
@@ -37,10 +37,10 @@ export function useNewPostForm() {
   }, []);
 
   const handleAddTag = useCallback(() => {
-    if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
+    if (tagInput.trim() && !(formData.tags ?? []).includes(tagInput.trim())) {
       setFormData(prev => ({
         ...prev,
-        tags: [...prev.tags, tagInput.trim()]
+        tags: [...(prev.tags ?? []), tagInput.trim()]
       }));
       setTagInput("");
     }
@@ -49,7 +49,7 @@ export function useNewPostForm() {
   const handleRemoveTag = useCallback((tagToRemove: string) => {
     setFormData(prev => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: (prev.tags ?? []).filter(tag => tag !== tagToRemove)
     }));
   }, []);
 
@@ -69,8 +69,8 @@ export function useNewPostForm() {
       const formDataObj = new FormData();
       formDataObj.append('title', formData.title);
       formDataObj.append('description', formData.description);
-      formDataObj.append('tags', JSON.stringify(formData.tags));
-      formDataObj.append('coverImage', formData.coverImage);
+      formDataObj.append('tags', JSON.stringify(formData.tags ?? []));
+      formDataObj.append('coverImage', formData.coverImage ?? '');
       formDataObj.append('content', formData.content);
 
       const result = await createPostAction(formDataObj);

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { BlogPostData } from "@/types/blog";
+import { BlogPostData } from "@/schemas/blog";
 import { createPostAction, updatePostAction } from "@/lib/actions/blog-actions";
 
 export function useBlogSubmit(slug?: string) {
@@ -17,8 +17,8 @@ export function useBlogSubmit(slug?: string) {
       const formDataObj = new FormData();
       formDataObj.append('title', formData.title);
       formDataObj.append('description', formData.description);
-      formDataObj.append('tags', JSON.stringify(formData.tags));
-      formDataObj.append('coverImage', formData.coverImage);
+      formDataObj.append('tags', JSON.stringify(formData.tags ?? []));
+      formDataObj.append('coverImage', formData.coverImage ?? '');
       formDataObj.append('content', formData.content);
 
       const result = slug 

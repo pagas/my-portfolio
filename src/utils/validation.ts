@@ -7,7 +7,7 @@ export function validateBlogPost(data: {
   title: string;
   description: string;
   content: string;
-  tags: string[];
+  tags?: string[];
 }): ValidationError[] {
   const errors: ValidationError[] = [];
 
@@ -27,7 +27,7 @@ export function validateBlogPost(data: {
     errors.push({ field: 'content', message: 'Content is required' });
   }
 
-  if (data.tags.length > 10) {
+  if ((data.tags?.length ?? 0) > 10) {
     errors.push({ field: 'tags', message: 'Maximum 10 tags allowed' });
   }
 

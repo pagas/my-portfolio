@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { BlogPostData } from "@/types/blog";
+import { BlogPostData } from "@/schemas/blog";
 
 export function useBlogForm(initialData: BlogPostData) {
   const [formData, setFormData] = useState<BlogPostData>(initialData);
@@ -13,10 +13,10 @@ export function useBlogForm(initialData: BlogPostData) {
   }, []);
 
   const handleAddTag = useCallback(() => {
-    if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
+    if (tagInput.trim() && !(formData.tags ?? []).includes(tagInput.trim())) {
       setFormData(prev => ({
         ...prev,
-        tags: [...prev.tags, tagInput.trim()]
+        tags: [...(prev.tags ?? []), tagInput.trim()]
       }));
       setTagInput("");
     }
@@ -25,7 +25,7 @@ export function useBlogForm(initialData: BlogPostData) {
   const handleRemoveTag = useCallback((tagToRemove: string) => {
     setFormData(prev => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: (prev.tags ?? []).filter(tag => tag !== tagToRemove)
     }));
   }, []);
 

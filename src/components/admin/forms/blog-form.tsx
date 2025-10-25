@@ -1,4 +1,4 @@
-import { BlogPostData } from "@/types/blog";
+import { BlogPostData } from "@/schemas/blog";
 import { FormField } from "@/components/ui";
 import { TagManager } from "@/components/blog";
 import { ContentEditor } from "@/components/blog";
@@ -58,13 +58,13 @@ export function BlogForm({
           label="Cover Image URL"
           id="coverImage"
           type="url"
-          value={formData.coverImage}
+          value={formData.coverImage ?? ''}
           onChange={(value) => onInputChange('coverImage', value)}
           placeholder="https://example.com/image.jpg"
         />
 
         <TagManager
-          tags={formData.tags}
+          tags={formData.tags ?? []}
           tagInput={tagInput}
           onTagInputChange={onTagInputChange}
           onAddTag={onAddTag}

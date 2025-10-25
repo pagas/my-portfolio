@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 // Custom hooks
 import { useBlogPost } from "@/hooks/useBlogPost";
-import { BlogPostData } from "@/types/blog";
+import { BlogPostData } from "@/schemas/blog";
 import { useBlogForm } from "@/hooks/useBlogForm";
 import { useBlogSubmit } from "@/hooks/useBlogSubmit";
 
@@ -169,13 +169,13 @@ export default function EditBlogPost({ params }: EditBlogPostProps) {
                   label="Cover Image URL"
                   id="coverImage"
                   type="url"
-                  value={formData.coverImage}
+                  value={formData.coverImage ?? ''}
                   onChange={(value) => handleInputChange('coverImage', value)}
                   placeholder="https://example.com/image.jpg"
                 />
 
                 <TagManager
-                  tags={formData.tags}
+                  tags={formData.tags ?? []}
                   tagInput={tagInput}
                   onTagInputChange={setTagInput}
                   onAddTag={handleAddTag}

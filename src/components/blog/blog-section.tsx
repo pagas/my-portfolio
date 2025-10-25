@@ -5,7 +5,7 @@ import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import type { BlogPost } from "@/types/blog";
+import type { BlogPost } from "@/schemas/blog";
 
 interface BlogSectionProps {
   posts: BlogPost[];
@@ -91,7 +91,7 @@ export function BlogSection({ posts }: BlogSectionProps) {
 
                     {/* Tags */}
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {post.tags.slice(0, 3).map((tag) => (
+                      {(post.tags ?? []).slice(0, 3).map((tag) => (
                         <span
                           key={tag}
                           className="px-2 py-1 bg-accent text-xs rounded-full"

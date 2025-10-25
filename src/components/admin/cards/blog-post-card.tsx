@@ -1,6 +1,6 @@
 import { PostMeta } from "./post-meta";
 import { PostActions } from "./post-actions";
-import { BlogPost } from "@/types/blog";
+import { BlogPost } from "@/schemas/blog";
 
 interface BlogPostCardProps {
   post: BlogPost;
@@ -23,7 +23,7 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
 
             {/* Tags */}
             <div className="flex flex-wrap gap-2 mb-4">
-              {post.tags.map((tag) => (
+              {post.tags?.map((tag) => (
                 <span
                   key={tag}
                   className="px-2 py-1 bg-accent text-xs rounded-full"

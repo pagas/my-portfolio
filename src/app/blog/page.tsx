@@ -80,7 +80,7 @@ export default async function BlogPage() {
 
                       {/* Tags */}
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {post.tags.slice(0, 3).map((tag) => (
+                        {(post.tags ?? []).slice(0, 3).map((tag) => (
                           <span
                             key={tag}
                             className="px-2 py-1 bg-accent text-xs rounded-full"
