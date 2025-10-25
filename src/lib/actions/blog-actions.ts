@@ -11,7 +11,8 @@ export async function deletePostAction(slug: string) {
     // Require authentication
     const user = await requireAuth();
     
-    const result = await deletePost(slug);
+    // Pass userId to verify ownership
+    const result = await deletePost(slug, user.uid);
     
     if (result.success) {
       // Revalidate the blog pages to update the cache

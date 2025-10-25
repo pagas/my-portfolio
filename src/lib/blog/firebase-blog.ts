@@ -164,22 +164,47 @@ export async function updatePost(slug: string, postData: Partial<BlogPostData>):
 }
 
 // Delete a blog post
-export async function deletePost(slug: string): Promise<{ success: boolean; message: string }> {
+export async function deletePost(
+  slug: string, 
+  userId: string
+): Promise<{ success: boolean; message: string; deletedId?: string }> {
   try {
+    // Single query to find and verify ownership
     const postsRef = collection(db, POSTS_COLLECTION);
-    const q = query(postsRef, where('slug', '==', slug));
+    const q = query(
+      postsRef, 
+      where('slug', '==', slug),
+      where('authorId', '==', userId)  // Only find posts owned by user
+    );
     const snapshot = await getDocs(q);
     
     if (snapshot.empty) {
-      return { success: false, message: 'Post not found' };
+      return { success: false, message: 'Post not found or you do not have permission to delete it' };
     }
 
-    const docRef = doc(db, POSTS_COLLECTION, snapshot.docs[0].id);
-    await deleteDoc(docRef);
+    const postDoc = snapshot.docs[0];
+    
+    // Delete the post
+    await deleteDoc(doc(db, POSTS_COLLECTION, postDoc.id));
 
-    return { success: true, message: 'Post deleted successfully' };
+    return { 
+      success: true, 
+      message: 'Post deleted successfully',
+      deletedId: postDoc.id 
+    };
   } catch (error) {
     console.error('Error deleting post:', error);
+    
+    // Specific error handling
+    if (error instanceof Error) {
+      if (error.message.includes('permission')) {
+        return { success: false, message: 'Permission denied' };
+      }
+      if (error.message.includes('not-found')) {
+        return { success: false, message: 'Post not found' };
+      }
+    }
+    
     return { success: false, message: 'Failed to delete post' };
   }
 }
