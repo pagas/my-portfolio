@@ -1,67 +1,61 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { createPost } from '@/lib/firebase-blog';
-import { verifyFirebaseToken } from '@/lib/auth-utils';
 import { getOrCreateUser } from '@/lib/users';
+import { 
+  withAuth, 
+  createSuccessResponse, 
+  ApiErrors,
+  validateRequestBody,
+  AuthenticatedUser 
+} from '@/lib/api-middleware';
+import { z } from 'zod';
 
-export async function POST(request: NextRequest) {
+// Input validation schema for creating posts
+const CreatePostSchema = z.object({
+  title: z.string().min(1).max(200),
+  description: z.string().min(1).max(500),
+  tags: z.array(z.string().min(1).max(50)).max(10).optional(),
+  coverImage: z.string().url().optional().or(z.literal('')),
+  content: z.string().min(1).max(50000),
+});
+
+export const POST = withAuth(async (
+  user: AuthenticatedUser,
+  request: NextRequest
+) => {
   try {
-    // Verify authentication
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { message: 'Authentication required' },
-        { status: 401 }
-      );
-    }
-
-    const token = authHeader.split('Bearer ')[1];
-    const authUser = await verifyFirebaseToken(token);
+    // Parse and validate request body
+    const body = await request.json();
+    const { data: validatedData, error: validationError } = validateRequestBody(body, CreatePostSchema);
     
-    if (!authUser) {
-      return NextResponse.json(
-        { message: 'Invalid authentication token' },
-        { status: 401 }
-      );
-    }
-
-    const { title, description, tags, coverImage, content } = await request.json();
-
-    // Validate required fields
-    if (!title || !description || !content) {
-      return NextResponse.json(
-        { message: 'Title, description, and content are required' },
-        { status: 400 }
-      );
+    if (validationError) {
+      return validationError;
     }
 
     // Get or create user profile
-    const userProfile = await getOrCreateUser(authUser.uid, authUser.email!, authUser.name);
+    const userProfile = await getOrCreateUser(user.uid, user.email!, user.name);
 
     const result = await createPost({
-      title,
-      description,
-      tags: tags || [],
+      title: validatedData!.title,
+      description: validatedData!.description,
+      tags: validatedData!.tags || [],
       authorId: userProfile.uid,
-      coverImage: coverImage || '',
-      content,
+      coverImage: validatedData!.coverImage || '',
+      content: validatedData!.content,
     });
 
     if (result.success) {
-      return NextResponse.json(
-        { message: result.message, slug: result.id },
-        { status: 201 }
+      return createSuccessResponse(
+        { slug: result.id }, 
+        result.message
       );
     } else {
-      return NextResponse.json(
-        { message: result.message },
-        { status: result.message.includes('already exists') ? 409 : 500 }
-      );
+      return result.message.includes('already exists') 
+        ? ApiErrors.conflict(result.message)
+        : ApiErrors.serverError(result.message);
     }
   } catch (error) {
     console.error('Error creating blog post:', error);
-    return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 }
-    );
+    return ApiErrors.serverError();
   }
-}
+});

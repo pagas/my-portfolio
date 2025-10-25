@@ -17,7 +17,7 @@ export interface ApiResponse<T = any> {
 }
 
 export interface ApiError {
-  type: 'VALIDATION_ERROR' | 'NOT_FOUND' | 'UNAUTHORIZED' | 'SERVER_ERROR' | 'FORBIDDEN';
+  type: 'VALIDATION_ERROR' | 'NOT_FOUND' | 'UNAUTHORIZED' | 'SERVER_ERROR' | 'FORBIDDEN' | 'CONFLICT';
   message: string;
   status: number;
 }
@@ -164,6 +164,12 @@ export const ApiErrors = {
     type: 'FORBIDDEN',
     message,
     status: 403
+  }),
+  
+  conflict: (message: string) => createErrorResponse({
+    type: 'CONFLICT',
+    message,
+    status: 409
   }),
   
   serverError: (message: string = 'Internal server error') => createErrorResponse({
