@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { BlogPostData } from "@/types/blog";
 import { useAuth } from "@/contexts/AuthContext";
+import { createPostAction } from "@/lib/actions/blog-actions";
 
 export function useNewPostForm() {
   const router = useRouter();
@@ -12,7 +13,7 @@ export function useNewPostForm() {
     title: "",
     description: "",
     tags: [],
-    author: user?.email || "Your Name",
+    authorId: user?.uid || "",
     coverImage: "",
     content: "",
   });
@@ -20,10 +21,10 @@ export function useNewPostForm() {
 
   // Update author when user changes
   useEffect(() => {
-    if (user?.email) {
+    if (user?.uid) {
       setFormData(prev => ({
         ...prev,
-        author: user.email || "Your Name"
+        authorId: user.uid
       }));
     }
   }, [user]);
@@ -64,27 +65,26 @@ export function useNewPostForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/blog/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await user?.getIdToken()}`,
-        },
-        body: JSON.stringify({
-          title: formData.title,
-          description: formData.description,
-          tags: formData.tags,
-          coverImage: formData.coverImage,
-          content: formData.content,
-        }),
-      });
+      // Create FormData for Server Action
+      const formDataObj = new FormData();
+      formDataObj.append('title', formData.title);
+      formDataObj.append('description', formData.description);
+      formDataObj.append('tags', JSON.stringify(formData.tags));
+      formDataObj.append('coverImage', formData.coverImage);
+      formDataObj.append('content', formData.content);
 
-      if (response.ok) {
-        const result = await response.json();
-        router.push(`/blog/${result.slug}`);
+      const result = await createPostAction(formDataObj);
+
+      if (result.success && 'id' in result) {
+        router.push(`/blog/${result.id}`);
       } else {
-        const error = await response.json();
-        alert(`Error creating post: ${error.message}`);
+        if ('errors' in result && result.errors) {
+          // Handle validation errors
+          const errorMessages = result.errors.map((err: any) => `${err.field}: ${err.message}`).join(', ');
+          alert(`Validation errors: ${errorMessages}`);
+        } else {
+          alert(`Error creating post: ${result.message}`);
+        }
       }
     } catch (error) {
       console.error('Error creating blog post:', error);

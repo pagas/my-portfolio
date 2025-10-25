@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { BlogPostData, BlogPost } from "@/types/blog";
+import { getPostAction } from "@/lib/actions/blog-actions";
 
 export function useBlogPost(slug: string) {
   const [post, setPost] = useState<BlogPost | null>(null);
@@ -10,13 +11,12 @@ export function useBlogPost(slug: string) {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/blog/${slug}`);
-      if (response.ok) {
-        const data = await response.json();
-        setPost(data);
+      const result = await getPostAction(slug);
+      
+      if (result.success && result.data) {
+        setPost(result.data);
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Post not found');
+        setError(result.message || 'Post not found');
       }
     } catch (err) {
       console.error('Error loading post:', err);
