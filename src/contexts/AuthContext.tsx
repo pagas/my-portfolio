@@ -25,10 +25,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Ensure user profile exists for authenticated users
+  // Ensure user profile exists for new users
   const ensureUserProfile = async (user: User) => {
     try {
-      await getOrCreateUser(user.uid, user.email!, user.displayName || undefined);
+      if (!user.uid || !user.email) {
+        console.warn('User data incomplete, skipping profile creation');
+        return;
+      }
+      await getOrCreateUser(user.uid, user.email, user.displayName || undefined);
     } catch (error) {
       console.error('Error creating user profile:', error);
     }
@@ -37,9 +41,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Create user profile if it doesn't exist
-        await ensureUserProfile(user);
-        
         // Set authentication cookie for server-side access
         const token = await user.getIdToken();
         const isSecure = process.env.NODE_ENV === 'production';
@@ -60,7 +61,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (email: string, password: string) => {
-    await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    // Create user profile immediately after successful registration
+    await ensureUserProfile(userCredential.user);
   };
 
   const logout = async () => {
