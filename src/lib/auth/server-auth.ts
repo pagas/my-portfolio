@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { verifyFirebaseToken } from '@/lib/auth-utils';
+import { verifyFirebaseToken } from './auth-utils';
 
 export interface AuthenticatedUser {
   uid: string;

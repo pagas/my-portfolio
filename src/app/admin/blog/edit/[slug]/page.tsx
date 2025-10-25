@@ -6,7 +6,8 @@ import { Save } from "lucide-react";
 import { motion } from "framer-motion";
 
 // Custom hooks
-import { useBlogPost, BlogPostData } from "@/hooks/useBlogPost";
+import { useBlogPost } from "@/hooks/useBlogPost";
+import { BlogPostData } from "@/types/blog";
 import { useBlogForm } from "@/hooks/useBlogForm";
 import { useBlogSubmit } from "@/hooks/useBlogSubmit";
 
@@ -46,7 +47,7 @@ export default function EditBlogPost({ params }: EditBlogPostProps) {
     title: "",
     description: "",
     tags: [],
-    author: "Your Name",
+    authorId: "Your Name",
     coverImage: "",
     content: "",
     date: "",
@@ -158,9 +159,9 @@ export default function EditBlogPost({ params }: EditBlogPostProps) {
 
                 <FormField
                   label="Author"
-                  id="author"
-                  value={formData.author}
-                  onChange={(value) => handleInputChange('author', value)}
+                  id="authorId"
+                  value={formData.authorId}
+                  onChange={(value) => handleInputChange('authorId', value)}
                   placeholder="Your name"
                 />
 

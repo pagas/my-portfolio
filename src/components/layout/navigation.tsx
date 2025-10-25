@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { scrollToSection as scrollTo } from "@/lib/scroll";
+import { scrollToSection as scrollTo } from "@/lib/utils/scroll";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";

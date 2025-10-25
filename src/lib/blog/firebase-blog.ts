@@ -13,9 +13,9 @@ import {
   Timestamp 
 } from 'firebase/firestore';
 import readingTime from 'reading-time';
-import { db } from './firebase';
+import { db } from '../firebase/firebase';
 import { BlogPost, BlogPostData } from '@/types/blog';
-import { getUserByUid, User } from './users';
+import { getUserByUid, User } from '../auth/users';
 
 const POSTS_COLLECTION = 'posts';
 

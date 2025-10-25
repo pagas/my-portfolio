@@ -8,8 +8,8 @@ import {
   onAuthStateChanged,
   createUserWithEmailAndPassword 
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { getOrCreateUser } from '@/lib/users';
+import { auth } from '@/lib/firebase/firebase';
+import { getOrCreateUser } from '@/lib/auth/users';
 
 interface AuthContextType {
   user: User | null;

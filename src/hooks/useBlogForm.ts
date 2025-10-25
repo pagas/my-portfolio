@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { BlogPostData } from "./useBlogPost";
+import { BlogPostData } from "@/types/blog";
 
 export function useBlogForm(initialData: BlogPostData) {
   const [formData, setFormData] = useState<BlogPostData>(initialData);

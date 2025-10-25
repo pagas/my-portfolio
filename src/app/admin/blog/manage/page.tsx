@@ -1,4 +1,4 @@
-import { getAllPosts } from "@/lib/blog";
+import { getAllPosts } from "@/lib/blog/blog";
 import { Metadata } from "next";
 import { EmptyState, BlogPostCard, PageHeader, BackButton } from "@/components/admin";
 

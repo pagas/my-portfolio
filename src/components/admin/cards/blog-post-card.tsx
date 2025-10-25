@@ -1,15 +1,6 @@
 import { PostMeta } from "./post-meta";
 import { PostActions } from "./post-actions";
-
-interface BlogPost {
-  slug: string;
-  title: string;
-  description: string;
-  date: string;
-  readingTime: string;
-  author: string;
-  tags: string[];
-}
+import { BlogPost } from "@/types/blog";
 
 interface BlogPostCardProps {
   post: BlogPost;
@@ -27,7 +18,7 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
             <PostMeta 
               date={post.date}
               readingTime={post.readingTime}
-              author={post.author}
+              author={post.authorId}
             />
 
             {/* Tags */}

@@ -1,9 +1,9 @@
 'use server';
 
 import { revalidatePath } from "next/cache";
-import { createPost, updatePost, deletePost, getPostBySlug } from '@/lib/firebase-blog';
-import { getOrCreateUser } from '@/lib/users';
-import { requireAuth } from '@/lib/server-auth';
+import { createPost, updatePost, deletePost, getPostBySlug } from '@/lib/blog/firebase-blog';
+import { getOrCreateUser } from '@/lib/auth/users';
+import { requireAuth } from '@/lib/auth/server-auth';
 import { CreatePostRequestSchema, UpdatePostRequestSchema } from '@/schemas/blog';
 
 export async function deletePostAction(slug: string) {

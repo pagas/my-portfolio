@@ -11,3 +11,4 @@ export {
 } from './firebase-blog';
 
 export type { BlogPostWithUser } from './firebase-blog';
+export type { BlogPost, BlogPostData } from '@/types/blog';
