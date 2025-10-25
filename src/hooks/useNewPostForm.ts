@@ -13,21 +13,10 @@ export function useNewPostForm() {
     title: "",
     description: "",
     tags: [],
-    authorId: user?.uid || "",
     coverImage: "",
     content: "",
   });
   const [tagInput, setTagInput] = useState("");
-
-  // Update author when user changes
-  useEffect(() => {
-    if (user?.uid) {
-      setFormData(prev => ({
-        ...prev,
-        authorId: user.uid
-      }));
-    }
-  }, [user]);
 
   const handleInputChange = useCallback((field: keyof BlogPostData, value: string) => {
     setFormData(prev => ({

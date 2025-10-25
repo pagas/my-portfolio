@@ -47,10 +47,8 @@ export default function EditBlogPost({ params }: EditBlogPostProps) {
     title: "",
     description: "",
     tags: [],
-    authorId: "Your Name",
     coverImage: "",
     content: "",
-    date: "",
   });
 
   // Initialize form data when post loads
@@ -159,10 +157,10 @@ export default function EditBlogPost({ params }: EditBlogPostProps) {
 
                 <FormField
                   label="Author"
-                  id="authorId"
-                  value={formData.authorId}
-                  onChange={(value) => handleInputChange('authorId', value)}
-                  placeholder="Your name"
+                  id="author"
+                  value="Current User"
+                  onChange={() => {}} // Read-only field
+                  placeholder="Author is set automatically"
                 />
 
                 <FormField

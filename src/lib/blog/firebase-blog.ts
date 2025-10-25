@@ -107,7 +107,7 @@ export async function getRelatedPosts(currentSlug: string, tags: string[], limit
 }
 
 // Create a new blog post
-export async function createPost(postData: BlogPostData): Promise<{ success: boolean; message: string; id?: string }> {
+export async function createPost(postData: BlogPostData, authorId: string): Promise<{ success: boolean; message: string; id?: string }> {
   try {
     // Generate slug from title
     const slug = postData.title
@@ -126,6 +126,7 @@ export async function createPost(postData: BlogPostData): Promise<{ success: boo
     const postsRef = collection(db, POSTS_COLLECTION);
     const docRef = await addDoc(postsRef, {
       ...postData,
+      authorId,
       slug,
       publishedAt: serverTimestamp(),
       createdAt: serverTimestamp(),

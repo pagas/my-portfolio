@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createPost, updatePost, deletePost, getPostBySlug } from '@/lib/blog/firebase-blog';
 import { getOrCreateUser } from '@/lib/auth/users';
 import { requireAuth } from '@/lib/auth/server-auth';
-import { CreatePostRequestSchema, UpdatePostRequestSchema } from '@/schemas/blog';
+import { CreatePostSchema, UpdatePostSchema } from '@/schemas/blog';
 
 export async function deletePostAction(slug: string) {
   try {
@@ -45,7 +45,7 @@ export async function createPostAction(formData: FormData) {
     };
 
     // Validate input data
-    const validationResult = CreatePostRequestSchema.safeParse(rawData);
+    const validationResult = CreatePostSchema.safeParse(rawData);
     if (!validationResult.success) {
       return {
         success: false,
@@ -66,8 +66,7 @@ export async function createPostAction(formData: FormData) {
       ...validatedData,
       tags: validatedData.tags || [],
       coverImage: validatedData.coverImage || '',
-      authorId: userProfile.uid,
-    });
+    }, userProfile.uid);
     
     if (result.success) {
       // Revalidate the blog pages
@@ -100,7 +99,7 @@ export async function updatePostAction(slug: string, formData: FormData) {
     };
 
     // Validate input data
-    const validationResult = UpdatePostRequestSchema.safeParse(rawData);
+    const validationResult = UpdatePostSchema.safeParse(rawData);
     if (!validationResult.success) {
       return {
         success: false,
