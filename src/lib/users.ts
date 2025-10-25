@@ -1,7 +1,7 @@
 import { db } from '@/lib/firebase';
 import { collection, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
-export interface Author {
+export interface User {
   uid: string;
   email: string;
   displayName: string;
@@ -12,19 +12,19 @@ export interface Author {
   updatedAt: any;
 }
 
-const AUTHORS_COLLECTION = 'authors';
+const USERS_COLLECTION = 'users';
 
-// Get or create author profile in Firestore
-export async function getOrCreateAuthor(uid: string, email: string, name?: string): Promise<Author> {
-  const authorsRef = collection(db, AUTHORS_COLLECTION);
-  const authorDocRef = doc(authorsRef, uid);
+// Get or create user profile in Firestore
+export async function getOrCreateUser(uid: string, email: string, name?: string): Promise<User> {
+  const usersRef = collection(db, USERS_COLLECTION);
+  const userDocRef = doc(usersRef, uid);
   
   try {
-    // Try to get existing author
-    const authorDoc = await getDoc(authorDocRef);
+    // Try to get existing user
+    const userDoc = await getDoc(userDocRef);
     
-    if (authorDoc.exists()) {
-      const data = authorDoc.data();
+    if (userDoc.exists()) {
+      const data = userDoc.data();
       return {
         uid,
         email: data.email,
@@ -36,11 +36,11 @@ export async function getOrCreateAuthor(uid: string, email: string, name?: strin
         updatedAt: data.updatedAt,
       };
     } else {
-      // Create new author profile
+      // Create new user profile
       const displayName = name || email.split('@')[0] || 'Anonymous';
       const slug = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '-');
       
-      const newAuthor: Omit<Author, 'uid'> = {
+      const newUser: Omit<User, 'uid'> = {
         email,
         displayName,
         slug,
@@ -50,16 +50,16 @@ export async function getOrCreateAuthor(uid: string, email: string, name?: strin
         updatedAt: serverTimestamp(),
       };
       
-      await setDoc(authorDocRef, newAuthor);
+      await setDoc(userDocRef, newUser);
       
       return {
         uid,
-        ...newAuthor,
+        ...newUser,
       };
     }
   } catch (error) {
-    console.error('Error getting/creating author:', error);
-    // Fallback to basic author info
+    console.error('Error getting/creating user:', error);
+    // Fallback to basic user info
     return {
       uid,
       email,
@@ -71,15 +71,15 @@ export async function getOrCreateAuthor(uid: string, email: string, name?: strin
   }
 }
 
-// Get author by UID
-export async function getAuthorByUid(uid: string): Promise<Author | null> {
+// Get user by UID
+export async function getUserByUid(uid: string): Promise<User | null> {
   try {
-    const authorsRef = collection(db, AUTHORS_COLLECTION);
-    const authorDocRef = doc(authorsRef, uid);
-    const authorDoc = await getDoc(authorDocRef);
+    const usersRef = collection(db, USERS_COLLECTION);
+    const userDocRef = doc(usersRef, uid);
+    const userDoc = await getDoc(userDocRef);
     
-    if (authorDoc.exists()) {
-      const data = authorDoc.data();
+    if (userDoc.exists()) {
+      const data = userDoc.data();
       return {
         uid,
         email: data.email,
@@ -94,7 +94,7 @@ export async function getAuthorByUid(uid: string): Promise<Author | null> {
     
     return null;
   } catch (error) {
-    console.error('Error getting author:', error);
+    console.error('Error getting user:', error);
     return null;
   }
 }

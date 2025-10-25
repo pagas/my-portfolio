@@ -1,4 +1,4 @@
-import { getAllPostsWithAuthors } from "@/lib/blog";
+import { getAllPostsWithUsers } from "@/lib/blog";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const posts = await getAllPostsWithAuthors();
+  const posts = await getAllPostsWithUsers();
 
   return (
     <main className="min-h-screen pt-20">

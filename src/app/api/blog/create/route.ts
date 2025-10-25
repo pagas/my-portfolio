@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createPost } from '@/lib/firebase-blog';
 import { verifyFirebaseToken } from '@/lib/auth-utils';
-import { getOrCreateAuthor } from '@/lib/authors';
+import { getOrCreateUser } from '@/lib/users';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,9 +15,9 @@ export async function POST(request: NextRequest) {
     }
 
     const token = authHeader.split('Bearer ')[1];
-    const user = await verifyFirebaseToken(token);
+    const authUser = await verifyFirebaseToken(token);
     
-    if (!user) {
+    if (!authUser) {
       return NextResponse.json(
         { message: 'Invalid authentication token' },
         { status: 401 }
@@ -34,14 +34,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get or create author profile
-    const author = await getOrCreateAuthor(user.uid, user.email!, user.name);
+    // Get or create user profile
+    const userProfile = await getOrCreateUser(authUser.uid, authUser.email!, authUser.name);
 
     const result = await createPost({
       title,
       description,
       tags: tags || [],
-      authorId: author.uid,
+      authorId: userProfile.uid,
       coverImage: coverImage || '',
       content,
     });

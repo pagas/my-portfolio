@@ -9,6 +9,7 @@ import {
   createUserWithEmailAndPassword 
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import { getOrCreateUser } from '@/lib/users';
 
 interface AuthContextType {
   user: User | null;
@@ -24,8 +25,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Ensure user profile exists for authenticated users
+  const ensureUserProfile = async (user: User) => {
+    try {
+      await getOrCreateUser(user.uid, user.email!, user.displayName || undefined);
+    } catch (error) {
+      console.error('Error creating user profile:', error);
+    }
+  };
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Create user profile if it doesn't exist
+        await ensureUserProfile(user);
+      }
       setUser(user);
       setLoading(false);
     });

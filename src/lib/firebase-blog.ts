@@ -15,13 +15,13 @@ import {
 import readingTime from 'reading-time';
 import { db } from './firebase';
 import { BlogPost, BlogPostData } from '@/types/blog';
-import { getAuthorByUid, Author } from './authors';
+import { getUserByUid, User } from './users';
 
 const POSTS_COLLECTION = 'posts';
 
-// Extended BlogPost with author data
-export interface BlogPostWithAuthor extends BlogPost {
-  author: Author;
+// Extended BlogPost with user data
+export interface BlogPostWithUser extends BlogPost {
+  user: User;
 }
 
 // Convert Firestore document to BlogPost
@@ -184,48 +184,48 @@ export async function deletePost(slug: string): Promise<{ success: boolean; mess
   }
 }
 
-// Get all posts with author data
-export async function getAllPostsWithAuthors(): Promise<BlogPostWithAuthor[]> {
+// Get all posts with user data
+export async function getAllPostsWithUsers(): Promise<BlogPostWithUser[]> {
   try {
     const posts = await getAllPosts();
-    const postsWithAuthors: BlogPostWithAuthor[] = [];
+    const postsWithUsers: BlogPostWithUser[] = [];
     
     for (const post of posts) {
-      const author = await getAuthorByUid(post.authorId);
-      if (author) {
-        postsWithAuthors.push({
+      const user = await getUserByUid(post.authorId);
+      if (user) {
+        postsWithUsers.push({
           ...post,
-          author,
+          user,
         });
       }
     }
     
-    return postsWithAuthors;
+    return postsWithUsers;
   } catch (error) {
-    console.error('Error getting posts with authors:', error);
+    console.error('Error getting posts with users:', error);
     return [];
   }
 }
 
-// Get a single post by slug with author data
-export async function getPostBySlugWithAuthor(slug: string): Promise<BlogPostWithAuthor | null> {
+// Get a single post by slug with user data
+export async function getPostBySlugWithUser(slug: string): Promise<BlogPostWithUser | null> {
   try {
     const post = await getPostBySlug(slug);
     if (!post) {
       return null;
     }
     
-    const author = await getAuthorByUid(post.authorId);
-    if (!author) {
+    const user = await getUserByUid(post.authorId);
+    if (!user) {
       return null;
     }
     
     return {
       ...post,
-      author,
+      user,
     };
   } catch (error) {
-    console.error('Error getting post with author:', error);
+    console.error('Error getting post with user:', error);
     return null;
   }
 }

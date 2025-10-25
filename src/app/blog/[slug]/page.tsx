@@ -1,4 +1,4 @@
-import { getPostBySlugWithAuthor, getRelatedPosts, getAllPostsWithAuthors } from "@/lib/blog";
+import { getPostBySlugWithUser, getRelatedPosts, getAllPostsWithUsers } from "@/lib/blog";
 import { Calendar, Clock, ArrowLeft, Tag } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -11,7 +11,7 @@ interface BlogPostPageProps {
 }
 
 export async function generateStaticParams() {
-  const posts = await getAllPostsWithAuthors();
+  const posts = await getAllPostsWithUsers();
   return posts.map((post) => ({
     slug: post.slug,
   }));
@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlugWithAuthor(slug);
+  const post = await getPostBySlugWithUser(slug);
   
   if (!post) {
     return {
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = await getPostBySlugWithAuthor(slug);
+  const post = await getPostBySlugWithUser(slug);
 
   if (!post || !post.content) {
     notFound();
@@ -80,7 +80,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <Clock size={16} />
               {post.readingTime}
             </span>
-            <span>By <Link href={`/authors/${post.author.slug}`} className="text-blue-600 hover:underline">{post.author.displayName}</Link></span>
+            <span>By <Link href={`/users/${post.user.slug}`} className="text-blue-600 hover:underline">{post.user.displayName}</Link></span>
           </div>
 
           {/* Tags */}
@@ -105,11 +105,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Divider */}
         <hr className="my-12 border-border" />
 
-        {/* Author Bio */}
+        {/* User Bio */}
         <div className="bg-accent/30 rounded-xl p-6 mb-12">
           <h3 className="text-xl font-bold mb-2">About the Author</h3>
           <p className="text-foreground/70 mb-4">
-            {post.author.bio || `${post.author.displayName} is a full-stack developer passionate about creating amazing web experiences.`}
+            {post.user.bio || `${post.user.displayName} is a full-stack developer passionate about creating amazing web experiences.`}
           </p>
           <div className="flex gap-4">
             <Link href="https://github.com" className="text-blue-600 hover:underline">
