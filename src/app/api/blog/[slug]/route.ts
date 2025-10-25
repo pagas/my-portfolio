@@ -8,16 +8,7 @@ import {
   validateRequestBody,
   AuthenticatedUser 
 } from '@/lib/api-middleware';
-import { z } from 'zod';
-
-// Input validation schemas
-const UpdatePostSchema = z.object({
-  title: z.string().min(1).max(200).optional(),
-  description: z.string().min(1).max(500).optional(),
-  tags: z.array(z.string().min(1).max(50)).max(10).optional(),
-  coverImage: z.string().url().optional().or(z.literal('')),
-  content: z.string().min(1).max(50000),
-});
+import { UpdatePostRequestSchema } from '@/schemas/blog';
 
 // GET handler - no authentication required for reading posts
 export const GET = withOptionalAuth(async (
@@ -62,7 +53,7 @@ export const PUT = withAuth(async (
 
     // Parse and validate request body
     const body = await request.json();
-    const { data: validatedData, error: validationError } = validateRequestBody(body, UpdatePostSchema);
+    const { data: validatedData, error: validationError } = validateRequestBody(body, UpdatePostRequestSchema);
     
     if (validationError) {
       return validationError;

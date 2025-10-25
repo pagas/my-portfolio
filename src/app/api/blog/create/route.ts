@@ -8,16 +8,7 @@ import {
   validateRequestBody,
   AuthenticatedUser 
 } from '@/lib/api-middleware';
-import { z } from 'zod';
-
-// Input validation schema for creating posts
-const CreatePostSchema = z.object({
-  title: z.string().min(1).max(200),
-  description: z.string().min(1).max(500),
-  tags: z.array(z.string().min(1).max(50)).max(10).optional(),
-  coverImage: z.string().url().optional().or(z.literal('')),
-  content: z.string().min(1).max(50000),
-});
+import { CreatePostRequestSchema } from '@/schemas/blog';
 
 export const POST = withAuth(async (
   user: AuthenticatedUser,
@@ -26,7 +17,7 @@ export const POST = withAuth(async (
   try {
     // Parse and validate request body
     const body = await request.json();
-    const { data: validatedData, error: validationError } = validateRequestBody(body, CreatePostSchema);
+    const { data: validatedData, error: validationError } = validateRequestBody(body, CreatePostRequestSchema);
     
     if (validationError) {
       return validationError;
