@@ -1,48 +1,30 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { verifyFirebaseToken } from '@/lib/auth-utils';
+import { NextRequest } from 'next/server';
 import { getOrCreateUser } from '@/lib/users';
+import { 
+  withAuth, 
+  createSuccessResponse, 
+  ApiErrors,
+  AuthenticatedUser 
+} from '@/lib/api-middleware';
 
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (
+  user: AuthenticatedUser,
+  request: NextRequest
+) => {
   try {
-    // Verify authentication
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { message: 'Authentication required' },
-        { status: 401 }
-      );
-    }
-
-    const token = authHeader.split('Bearer ')[1];
-    const authUser = await verifyFirebaseToken(token);
-    
-    if (!authUser) {
-      return NextResponse.json(
-        { message: 'Invalid authentication token' },
-        { status: 401 }
-      );
-    }
-
     // Get or create user profile
-    const user = await getOrCreateUser(authUser.uid, authUser.email!, authUser.name);
+    const userProfile = await getOrCreateUser(user.uid, user.email!, user.name);
 
-    return NextResponse.json({
-      success: true,
-      user: {
-        uid: user.uid,
-        displayName: user.displayName,
-        slug: user.slug,
-        email: user.email,
-        bio: user.bio,
-        avatar: user.avatar,
-      }
+    return createSuccessResponse({
+      uid: userProfile.uid,
+      displayName: userProfile.displayName,
+      slug: userProfile.slug,
+      email: userProfile.email,
+      bio: userProfile.bio,
+      avatar: userProfile.avatar,
     });
-
   } catch (error) {
     console.error('Error ensuring user profile:', error);
-    return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 }
-    );
+    return ApiErrors.serverError();
   }
-}
+});
