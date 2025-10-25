@@ -32,7 +32,7 @@ export async function PUT(
 ) {
   try {
     const { slug } = await params;
-    const { title, description, tags, author, coverImage, content } = await request.json();
+    const { title, description, tags, coverImage, content } = await request.json();
 
     if (!content) {
       return NextResponse.json(
@@ -45,7 +45,6 @@ export async function PUT(
       title,
       description,
       tags,
-      author,
       coverImage,
       content,
     });
