@@ -1,6 +1,6 @@
 import { Navigation, Hero, About, Projects, Contact, Footer } from "@/components/layout";
 import { BlogSection } from "@/components/blog";
-import { getAllPosts } from "@/lib/blog/blog";
+import { getAllPosts } from "@/lib/blog";
 
 export default async function Home() {
   const posts = await getAllPosts();

@@ -1,4 +1,4 @@
-import { getPostBySlugWithUser, getRelatedPosts, getAllPostsWithUsers } from "@/lib/blog/blog";
+import { getPostBySlugWithUser, getRelatedPosts, getAllPostsWithUsers } from "@/lib/blog";
 import { Calendar, Clock, ArrowLeft, Tag } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";

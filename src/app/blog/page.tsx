@@ -1,4 +1,4 @@
-import { getAllPostsWithUsers } from "@/lib/blog/blog";
+import { getAllPostsWithUsers } from "@/lib/blog";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";

@@ -5,7 +5,7 @@ import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import type { BlogPost } from "@/lib/blog/blog";
+import type { BlogPost } from "@/types/blog";
 
 interface BlogSectionProps {
   posts: BlogPost[];
