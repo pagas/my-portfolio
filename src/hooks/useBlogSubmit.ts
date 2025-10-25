@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { BlogPostData } from "@/types/blog";
+import { createPostAction, updatePostAction } from "@/lib/actions/blog-actions";
 
 export function useBlogSubmit(slug?: string) {
   const router = useRouter();
@@ -10,30 +11,30 @@ export function useBlogSubmit(slug?: string) {
   const submitPost = useCallback(async (formData: BlogPostData) => {
     setIsSubmitting(true);
     setError(null);
+    
     try {
-      const url = slug ? `/api/blog/${slug}` : '/api/blog/create';
-      const method = slug ? 'PUT' : 'POST';
+      // Convert to FormData for Server Actions
+      const formDataObj = new FormData();
+      formDataObj.append('title', formData.title);
+      formDataObj.append('description', formData.description);
+      formDataObj.append('tags', JSON.stringify(formData.tags));
+      formDataObj.append('coverImage', formData.coverImage);
+      formDataObj.append('content', formData.content);
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      const result = slug 
+        ? await updatePostAction(slug, formDataObj)
+        : await createPostAction(formDataObj);
 
-      if (response.ok) {
-        const data = await response.json();
-        // For new posts, redirect to the blog listing
-        // For updates, redirect to the updated post
+      if (result.success) {
         if (slug) {
           router.push(`/blog/${slug}`);
+        } else if ('id' in result) {
+          router.push(`/blog/${result.id}`);
         } else {
           router.push('/blog');
         }
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || `Error ${slug ? 'updating' : 'creating'} post`);
+        setError(result.message);
       }
     } catch (err) {
       console.error(`Error ${slug ? 'updating' : 'creating'} blog post:`, err);
